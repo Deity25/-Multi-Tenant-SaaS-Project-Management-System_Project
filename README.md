@@ -1,3 +1,4 @@
+Multi‑tenant SaaS app with auth, billing, RBAC, audit logs, and admin dashboard
 # Rv5 — Project Management Platform
 
 Rv5 is a full-stack, multi-tenant project management system with:
@@ -14,7 +15,7 @@ Rv5 is a full-stack, multi-tenant project management system with:
 ## Quick Start (Terminal)
 1. Go to the project:
 ```
-cd "/Users/gaurishankarvhadle/Documents/New project/saas-project"
+cd "/Users////saas-project"
 ```
 
 2. Install dependencies:
