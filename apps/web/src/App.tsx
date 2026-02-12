@@ -338,7 +338,7 @@ export function App() {
   const [assignUserId, setAssignUserId] = useState("");
   const [assignProjectId, setAssignProjectId] = useState("");
 
-  // Helper to generate headers safely
+  // Helper to generate headers safely for production
   const getHeaders = (token?: string): HeadersInit => {
     const t = token ?? auth?.token;
     return {
