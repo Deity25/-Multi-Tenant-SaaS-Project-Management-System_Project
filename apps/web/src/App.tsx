@@ -1,3 +1,274 @@
+// import { useEffect, useMemo, useState } from "react";
+
+// type Project = {
+//   id: string;
+//   name: string;
+//   description?: string | null;
+//   boards: { id: string; name: string }[];
+// };
+
+// type Task = {
+//   id: string;
+//   title: string;
+//   status: "TODO" | "IN_PROGRESS" | "DONE";
+// };
+
+// type Member = {
+//   id: string;
+//   role: string;
+//   user: { id: string; name: string; email: string };
+// };
+
+// type ProjectMember = {
+//   id: string;
+//   role: string;
+//   user: { id: string; name: string; email: string };
+// };
+
+// type TenantSummary = {
+//   id: string;
+//   name: string;
+//   slug: string;
+//   members: number;
+//   projects: number;
+//   tasks: number;
+//   createdAt: string;
+// };
+
+// type AuthState = {
+//   token: string;
+//   tenantId: string;
+//   userId: string;
+//   role: string;
+// };
+
+// const API = "http://localhost:5555";
+
+// export function App() {
+//   const [auth, setAuth] = useState<AuthState | null>(null);
+//   const [mode, setMode] = useState<"login" | "signup">("signup");
+//   const [tenantSlug, setTenantSlug] = useState("rv5");
+//   const [tenantName, setTenantName] = useState("Rv5");
+//   const [name, setName] = useState("Gaurishankar Vhadle");
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("password123");
+//   const [projects, setProjects] = useState<Project[]>([]);
+//   const [activeProject, setActiveProject] = useState<Project | null>(null);
+//   const [tasks, setTasks] = useState<Task[]>([]);
+//   const [members, setMembers] = useState<Member[]>([]);
+//   const [projectMembers, setProjectMembers] = useState<ProjectMember[]>([]);
+//   const [tenant, setTenant] = useState<TenantSummary | null>(null);
+//   const [newProjectName, setNewProjectName] = useState("Rv5 Roadmap");
+//   const [newTaskTitle, setNewTaskTitle] = useState("Define milestones");
+//   const [inviteName, setInviteName] = useState("New Teammate");
+//   const [inviteEmail, setInviteEmail] = useState("");
+//   const [inviteRole, setInviteRole] = useState("MEMBER");
+//   const [invitePassword, setInvitePassword] = useState("password123");
+//   const [assignUserId, setAssignUserId] = useState("");
+//   const [assignProjectId, setAssignProjectId] = useState("");
+
+//   const headers = useMemo(() => {
+//     if (!auth) return {};
+//     return { Authorization: `Bearer ${auth.token}`, "Content-Type": "application/json" };
+//   }, [auth]);
+
+//   async function signup() {
+//     const res = await fetch(`${API}/auth/signup`, {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ tenantName, tenantSlug, name, email, password })
+//     });
+//     if (!res.ok) {
+//       alert("Signup failed");
+//       return;
+//     }
+//     const data = await res.json();
+//     setAuth(data);
+//     await loadProjects(data.token);
+//     await loadMembers(data.token);
+//     await loadTenant(data.token);
+//   }
+
+//   async function login() {
+//     const res = await fetch(`${API}/auth/login`, {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ email, password, tenantSlug })
+//     });
+//     if (!res.ok) {
+//       alert("Login failed");
+//       return;
+//     }
+//     const data = await res.json();
+//     setAuth(data);
+//     await loadProjects(data.token);
+//     await loadMembers(data.token);
+//     await loadTenant(data.token);
+//   }
+
+//   async function loadProjects(token?: string) {
+//     const res = await fetch(`${API}/projects`, {
+//       headers: { Authorization: `Bearer ${token ?? auth?.token}` }
+//     });
+//     if (!res.ok) return;
+//     const data = await res.json();
+//     setProjects(data);
+//     setActiveProject(data[0] ?? null);
+//   }
+
+//   async function loadTasks(projectId: string, token?: string) {
+//     const res = await fetch(`${API}/projects/${projectId}/tasks`, {
+//       headers: { Authorization: `Bearer ${token ?? auth?.token}` }
+//     });
+//     if (!res.ok) return;
+//     const data = await res.json();
+//     setTasks(data);
+//   }
+
+//   async function loadProjectMembers(projectId: string, token?: string) {
+//     const res = await fetch(`${API}/projects/${projectId}/members`, {
+//       headers: { Authorization: `Bearer ${token ?? auth?.token}` }
+//     });
+//     if (!res.ok) return;
+//     const data = await res.json();
+//     setProjectMembers(data);
+//   }
+
+//   async function loadMembers(token?: string) {
+//     const res = await fetch(`${API}/admin/members`, {
+//       headers: { Authorization: `Bearer ${token ?? auth?.token}` }
+//     });
+//     if (!res.ok) return;
+//     const data = await res.json();
+//     setMembers(data);
+//   }
+
+//   async function loadTenant(token?: string) {
+//     const res = await fetch(`${API}/admin/tenant`, {
+//       headers: { Authorization: `Bearer ${token ?? auth?.token}` }
+//     });
+//     if (!res.ok) return;
+//     const data = await res.json();
+//     setTenant(data);
+//   }
+
+//   async function createProject() {
+//     const res = await fetch(`${API}/projects`, {
+//       method: "POST",
+//       headers,
+//       body: JSON.stringify({ name: newProjectName, description: "High-level roadmap" })
+//     });
+//     if (!res.ok) return;
+//     await loadProjects();
+//     if (auth?.token) {
+//       await loadMembers(auth.token);
+//       await loadTenant(auth.token);
+//     }
+//   }
+
+//   async function createTask() {
+//     if (!activeProject || activeProject.boards.length === 0) return;
+//     const boardId = activeProject.boards[0].id;
+//     const res = await fetch(`${API}/tasks`, {
+//       method: "POST",
+//       headers,
+//       body: JSON.stringify({ boardId, title: newTaskTitle })
+//     });
+//     if (!res.ok) return;
+//     await loadTasks(activeProject.id);
+//   }
+
+//   async function moveTask(taskId: string, status: Task["status"]) {
+//     const res = await fetch(`${API}/tasks/${taskId}`, {
+//       method: "PATCH",
+//       headers,
+//       body: JSON.stringify({ status })
+//     });
+//     if (!res.ok) return;
+//     const updated = await res.json();
+//     setTasks((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
+//   }
+
+//   async function deleteTask(taskId: string) {
+//     const res = await fetch(`${API}/tasks/${taskId}`, {
+//       method: "DELETE",
+//       headers
+//     });
+//     if (!res.ok) return;
+//     setTasks((prev) => prev.filter((t) => t.id !== taskId));
+//   }
+
+//   async function deleteProject(projectId: string) {
+//     const res = await fetch(`${API}/projects/${projectId}`, {
+//       method: "DELETE",
+//       headers
+//     });
+//     if (!res.ok) return;
+//     const next = projects.filter((p) => p.id !== projectId);
+//     setProjects(next);
+//     const newActive = next[0] ?? null;
+//     setActiveProject(newActive);
+//     if (newActive) {
+//       await loadTasks(newActive.id);
+//     } else {
+//       setTasks([]);
+//     }
+//   }
+
+//   async function inviteMember() {
+//     const res = await fetch(`${API}/admin/invite`, {
+//       method: "POST",
+//       headers,
+//       body: JSON.stringify({
+//         name: inviteName,
+//         email: inviteEmail,
+//         role: inviteRole,
+//         password: invitePassword
+//       })
+//     });
+//     if (!res.ok) {
+//       alert("Invite failed");
+//       return;
+//     }
+//     await loadMembers();
+//     await loadTenant();
+//   }
+
+//   async function assignToProject() {
+//     if (!assignProjectId || !assignUserId) return;
+//     const res = await fetch(`${API}/projects/${assignProjectId}/members`, {
+//       method: "POST",
+//       headers,
+//       body: JSON.stringify({ userId: assignUserId, role: "MEMBER" })
+//     });
+//     if (!res.ok) {
+//       alert("Assign failed");
+//       return;
+//     }
+//     setAssignUserId("");
+//     await loadProjectMembers(assignProjectId);
+//   }
+
+//   async function removeFromProject(userId: string) {
+//     if (!activeProject) return;
+//     const res = await fetch(`${API}/projects/${activeProject.id}/members/${userId}`, {
+//       method: "DELETE",
+//       headers
+//     });
+//     if (!res.ok) return;
+//     await loadProjectMembers(activeProject.id);
+//   }
+
+//   useEffect(() => {
+//     if (auth && activeProject) {
+//       void loadTasks(activeProject.id, auth.token);
+//       void loadProjectMembers(activeProject.id, auth.token);
+//     }
+//   }, [auth, activeProject?.id]);
+
+//   const doneCount = tasks.filter((t) => t.status === "DONE").length;
+//   const canAdmin = auth?.role === "OWNER" || auth?.role === "ADMIN";
+
 import { useEffect, useMemo, useState } from "react";
 
 type Project = {
@@ -67,21 +338,23 @@ export function App() {
   const [assignUserId, setAssignUserId] = useState("");
   const [assignProjectId, setAssignProjectId] = useState("");
 
-  const headers = useMemo(() => {
-    if (!auth) return {};
-    return { Authorization: `Bearer ${auth.token}`, "Content-Type": "application/json" };
-  }, [auth]);
+  // Helper to generate headers safely
+  const getHeaders = (token?: string): HeadersInit => {
+    const t = token ?? auth?.token;
+    return {
+      "Content-Type": "application/json",
+      ...(t ? { Authorization: `Bearer ${t}` } : {}),
+    };
+  };
 
   async function signup() {
     const res = await fetch(`${API}/auth/signup`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tenantName, tenantSlug, name, email, password })
+      headers: getHeaders(),
+      body: JSON.stringify({ tenantName, tenantSlug, name, email, password }),
     });
-    if (!res.ok) {
-      alert("Signup failed");
-      return;
-    }
+    if (!res.ok) return alert("Signup failed");
+
     const data = await res.json();
     setAuth(data);
     await loadProjects(data.token);
@@ -92,13 +365,11 @@ export function App() {
   async function login() {
     const res = await fetch(`${API}/auth/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, tenantSlug })
+      headers: getHeaders(),
+      body: JSON.stringify({ email, password, tenantSlug }),
     });
-    if (!res.ok) {
-      alert("Login failed");
-      return;
-    }
+    if (!res.ok) return alert("Login failed");
+
     const data = await res.json();
     setAuth(data);
     await loadProjects(data.token);
@@ -107,9 +378,7 @@ export function App() {
   }
 
   async function loadProjects(token?: string) {
-    const res = await fetch(`${API}/projects`, {
-      headers: { Authorization: `Bearer ${token ?? auth?.token}` }
-    });
+    const res = await fetch(`${API}/projects`, { headers: getHeaders(token) });
     if (!res.ok) return;
     const data = await res.json();
     setProjects(data);
@@ -117,53 +386,44 @@ export function App() {
   }
 
   async function loadTasks(projectId: string, token?: string) {
-    const res = await fetch(`${API}/projects/${projectId}/tasks`, {
-      headers: { Authorization: `Bearer ${token ?? auth?.token}` }
-    });
+    const res = await fetch(`${API}/projects/${projectId}/tasks`, { headers: getHeaders(token) });
     if (!res.ok) return;
     const data = await res.json();
     setTasks(data);
   }
 
   async function loadProjectMembers(projectId: string, token?: string) {
-    const res = await fetch(`${API}/projects/${projectId}/members`, {
-      headers: { Authorization: `Bearer ${token ?? auth?.token}` }
-    });
+    const res = await fetch(`${API}/projects/${projectId}/members`, { headers: getHeaders(token) });
     if (!res.ok) return;
     const data = await res.json();
     setProjectMembers(data);
   }
 
   async function loadMembers(token?: string) {
-    const res = await fetch(`${API}/admin/members`, {
-      headers: { Authorization: `Bearer ${token ?? auth?.token}` }
-    });
+    const res = await fetch(`${API}/admin/members`, { headers: getHeaders(token) });
     if (!res.ok) return;
     const data = await res.json();
     setMembers(data);
   }
 
   async function loadTenant(token?: string) {
-    const res = await fetch(`${API}/admin/tenant`, {
-      headers: { Authorization: `Bearer ${token ?? auth?.token}` }
-    });
+    const res = await fetch(`${API}/admin/tenant`, { headers: getHeaders(token) });
     if (!res.ok) return;
     const data = await res.json();
     setTenant(data);
   }
 
   async function createProject() {
+    if (!newProjectName) return;
     const res = await fetch(`${API}/projects`, {
       method: "POST",
-      headers,
-      body: JSON.stringify({ name: newProjectName, description: "High-level roadmap" })
+      headers: getHeaders(),
+      body: JSON.stringify({ name: newProjectName, description: "High-level roadmap" }),
     });
     if (!res.ok) return;
     await loadProjects();
-    if (auth?.token) {
-      await loadMembers(auth.token);
-      await loadTenant(auth.token);
-    }
+    await loadMembers();
+    await loadTenant();
   }
 
   async function createTask() {
@@ -171,8 +431,8 @@ export function App() {
     const boardId = activeProject.boards[0].id;
     const res = await fetch(`${API}/tasks`, {
       method: "POST",
-      headers,
-      body: JSON.stringify({ boardId, title: newTaskTitle })
+      headers: getHeaders(),
+      body: JSON.stringify({ boardId, title: newTaskTitle }),
     });
     if (!res.ok) return;
     await loadTasks(activeProject.id);
@@ -181,8 +441,8 @@ export function App() {
   async function moveTask(taskId: string, status: Task["status"]) {
     const res = await fetch(`${API}/tasks/${taskId}`, {
       method: "PATCH",
-      headers,
-      body: JSON.stringify({ status })
+      headers: getHeaders(),
+      body: JSON.stringify({ status }),
     });
     if (!res.ok) return;
     const updated = await res.json();
@@ -190,46 +450,29 @@ export function App() {
   }
 
   async function deleteTask(taskId: string) {
-    const res = await fetch(`${API}/tasks/${taskId}`, {
-      method: "DELETE",
-      headers
-    });
+    const res = await fetch(`${API}/tasks/${taskId}`, { method: "DELETE", headers: getHeaders() });
     if (!res.ok) return;
     setTasks((prev) => prev.filter((t) => t.id !== taskId));
   }
 
   async function deleteProject(projectId: string) {
-    const res = await fetch(`${API}/projects/${projectId}`, {
-      method: "DELETE",
-      headers
-    });
+    const res = await fetch(`${API}/projects/${projectId}`, { method: "DELETE", headers: getHeaders() });
     if (!res.ok) return;
     const next = projects.filter((p) => p.id !== projectId);
     setProjects(next);
     const newActive = next[0] ?? null;
     setActiveProject(newActive);
-    if (newActive) {
-      await loadTasks(newActive.id);
-    } else {
-      setTasks([]);
-    }
+    if (newActive) await loadTasks(newActive.id);
+    else setTasks([]);
   }
 
   async function inviteMember() {
     const res = await fetch(`${API}/admin/invite`, {
       method: "POST",
-      headers,
-      body: JSON.stringify({
-        name: inviteName,
-        email: inviteEmail,
-        role: inviteRole,
-        password: invitePassword
-      })
+      headers: getHeaders(),
+      body: JSON.stringify({ name: inviteName, email: inviteEmail, role: inviteRole, password: invitePassword }),
     });
-    if (!res.ok) {
-      alert("Invite failed");
-      return;
-    }
+    if (!res.ok) return alert("Invite failed");
     await loadMembers();
     await loadTenant();
   }
@@ -238,13 +481,10 @@ export function App() {
     if (!assignProjectId || !assignUserId) return;
     const res = await fetch(`${API}/projects/${assignProjectId}/members`, {
       method: "POST",
-      headers,
-      body: JSON.stringify({ userId: assignUserId, role: "MEMBER" })
+      headers: getHeaders(),
+      body: JSON.stringify({ userId: assignUserId, role: "MEMBER" }),
     });
-    if (!res.ok) {
-      alert("Assign failed");
-      return;
-    }
+    if (!res.ok) return alert("Assign failed");
     setAssignUserId("");
     await loadProjectMembers(assignProjectId);
   }
@@ -253,7 +493,7 @@ export function App() {
     if (!activeProject) return;
     const res = await fetch(`${API}/projects/${activeProject.id}/members/${userId}`, {
       method: "DELETE",
-      headers
+      headers: getHeaders(),
     });
     if (!res.ok) return;
     await loadProjectMembers(activeProject.id);
@@ -268,7 +508,7 @@ export function App() {
 
   const doneCount = tasks.filter((t) => t.status === "DONE").length;
   const canAdmin = auth?.role === "OWNER" || auth?.role === "ADMIN";
-
+  
   return (
     <div className="app">
       <header className="hero">
