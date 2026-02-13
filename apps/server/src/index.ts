@@ -16,7 +16,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://your-frontend-url.up.railway.app"
+      "https://considerate-bravery-production-e198.up.railway.app"
     ],
     credentials: true,
   })
