@@ -313,7 +313,9 @@ type AuthState = {
   role: string;
 };
 
-const API = "http://localhost:5555";
+//const API = "http://localhost:5555";
+const API = import.meta.env.VITE_API_URL;
+
 
 export function App() {
   const [auth, setAuth] = useState<AuthState | null>(null);
