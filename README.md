@@ -1,6 +1,5 @@
 Multi‑tenant SaaS app with auth, billing, RBAC, audit logs, and admin dashboard
 # Rv5 — Project Management Platform
-
 Rv5 is a full-stack, multi-tenant project management system with:
 - Auth (signup/login)
 - RBAC (owner/admin/member/viewer)
