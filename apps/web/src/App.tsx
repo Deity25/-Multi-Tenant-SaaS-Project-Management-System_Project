@@ -41,7 +41,9 @@ type AuthState = {
   userId: string;
   role: string;
 };
-const API = import.meta.env.VITE_API_URL;
+
+const API = import.meta.env.VITE_API_URL as string;
+
 export function App() {
   const [auth, setAuth] = useState<AuthState | null>(null);
   const [mode, setMode] = useState<"login" | "signup">("signup");
