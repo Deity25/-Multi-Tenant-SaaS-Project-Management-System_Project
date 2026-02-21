@@ -2,7 +2,6 @@ Multi‑tenant SaaS app with auth, billing, RBAC, audit logs, and admin dashboar
 
 Deployed On: * http://considerate-bravery-production-e198.up.railway.app *
 
-
 # Rv5 — Project Management Platform
 Rv5 is a full-stack, multi-tenant project management system with:
 - Auth (signup/login)
