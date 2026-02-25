@@ -96,3 +96,7 @@ Server default port is now 5555
 Web app calls API at http://localhost:5555
 README includes full terminal steps + DB location + reset steps
 .env.example includes PORT=5555
+
+
+
+Main files are few and other are imported liberaries for the better UI and UX
