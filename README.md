@@ -66,24 +66,24 @@ npm run prisma:migrate --workspace apps/server
 - If you want Postgres later, update `apps/server/prisma/schema.prisma` and `DATABASE_URL`.
 - Billing endpoints require Stripe keys (optional).
 
-// cd "/Users/gaurishankarvhadle/Documents/New project/saas-project"
+// cd "/Users//Documents/New project/saas-project"
 rm -f apps/server/prisma/dev.db
 npm run prisma:migrate --workspace apps/server
 npm run dev
 
-// /Users/gaurishankarvhadle/Documents/New project/saas-project/apps/server/prisma/dev.db
+// /Users//Documents/New project/saas-project/apps/server/prisma/dev.db
 Where all data is stored
 Your data lives in this SQLite file:
 
-/Users/gaurishankarvhadle/Documents/New project/saas-project/apps/server/prisma/dev.db
+/Users//Documents/New project/saas-project/apps/server/prisma/dev.db
 Ways to view all data
 Option 1: Prisma Studio (easy UI)
-cd "/Users/gaurishankarvhadle/Documents/New project/saas-project"
+cd "/Users//Documents/New project/saas-project"
 npx prisma studio --schema apps/server/prisma/schema.prisma
 This opens a web UI where you can browse everything.
 
 Option 2: Terminal (SQLite)
-sqlite3 "/Users/gaurishankarvhadle/Documents/New project/saas-project/apps/server/prisma/dev.db"
+sqlite3 "/Users//Documents/New project/saas-project/apps/server/prisma/dev.db"
 .tables
 SELECT * FROM User;
 SELECT * FROM Project;
