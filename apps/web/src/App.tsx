@@ -363,7 +363,6 @@ export function App() {
             )}
           </div>
         </div>
-
         <div className="panel">
           <div className="panel-header">
             <h2>Project Members</h2>
