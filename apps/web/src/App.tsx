@@ -469,6 +469,7 @@ export function App() {
                   <option value="ADMIN">Admin</option>
                   <option value="MEMBER">Member</option>
                   <option value="VIEWER">Viewer</option>
+                  <option value="Guest">Gauest</option>
                 </select>
                 <button onClick={inviteMember}>Invite</button>
               </div>
