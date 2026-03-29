@@ -1,4 +1,3 @@
-https://roadmap.sh/projects/movie-reservation-system
 
 Multi‑tenant SaaS app with auth, billing, RBAC, audit logs, and admin dashboard
 
