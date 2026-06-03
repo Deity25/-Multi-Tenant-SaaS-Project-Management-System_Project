@@ -73,6 +73,7 @@ rm -f apps/server/prisma/dev.db
 npm run prisma:migrate --workspace apps/server
 npm run dev
 
+
 // /Users//Documents/New project/saas-project/apps/server/prisma/dev.db
 Where all data is stored
 Your data lives in this SQLite file:
